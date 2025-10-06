@@ -1,61 +1,71 @@
-# Escribir un programa que pregunte al usuario su edad 
-# y muestre por pantalla todos los años que ha cumplido (desde 1 hasta su edad).
-
-edad = int(input("Ingresa tu edad: "))
-for i in range (edad):
-    print(f"Ya cumpliste: {i+1} años")
-
-# Escribir un programa que pida al usuario un número entero positivo y muestre 
-# por pantalla todos los números impares desde 1 hasta ese número separados por comas.
-
+# ejercicio11.py - Gestión de lista
+# Crea lista vacía
+# Menu: 1.Agregar, 2.Mostrar, 3.Eliminar, 4.Salir
+import time
+tareas = ["Hacer algo", "Hacer nada", "Morir"]
 while True:
-    try:
-        numero = int(input("Ingrese un número: "))
-        if numero > 0:
-            break
-        else:
-            print("Por favor ingrese un numero positivo. ")
-    except ValueError:
-        print("Error. Ingrese solo numero enteros.")
-print(f"Numeros pares desde 1 hasta {numero}: ")
-for i in range(numero+1):
-    if not i % 2 == 0:
-        print(i, end=",")
+    print("\n","="*10, "GESTION DE LISTA", "="*10)
+    print(" 1. Agregar\n 2. Mostrar\n 3. Eliminar\n 4. Salir\n")
 
-# Escribir un programa que pida al usuario un número entero
-# positivo y muestre por pantalla la cuenta atrás desde ese número hasta cero separados por comas.
-while True:
-    try:
-        numero = int(input("Ingrese un número: "))
-        if numero > 0:
-            break
-        else: 
-            print("Por favor ingrese un número positivo.")
-    except ValueError:
-        print("Error. Ingrese solo numeros enteros.")
-for i in range (numero, -1, -1):
-    print(i, end=",")
+    opcion = int(input("Ingrese la opcion que desea realizar: "))
 
-# Escribir un programa que pregunte al usuario una cantidad a invertir,
-# el interés anual y el número de años, y muestre por pantalla el capital 
-# obtenido en la inversión cada año que dura la inversión.
-print("Calculadore de interés simple\n")
-capital_ini = float(input("Ingrese el capital inicial: "))
-tasa_anual = float(input("Ingrese la tasa de interés anual: "))
-tiempo = int(input("Ingrese el tiempo de la inversión en años: "))
+    if opcion == 1:
+        print("Agregar tarea: ")
+        while True:
+            nuevo_ele = input("Ingrese la tarea a agregar: ")
+            if nuevo_ele:
+                tareas.append(nuevo_ele)
+                if nuevo_ele in tareas:
+                    print("Tarea agregada correctamente")
 
-intereses = 0
-capital_total = capital_ini
-for i in range(tiempo):
-    interes_anual = capital_total * tasa_anual / 100
-    capital_total += interes_anual
-    intereses += interes_anual
-    print(f"Capital total tras {i+1} años: {capital_total:.2f}")
-print(f"Intereses generados en total: {intereses:.2f}")
+                else:
+                    print("Error agregando la tarea")
 
-    
+                agg_nuevo = input("\n¿Desea agregar otra tarea?: S/N").lower()
+                if agg_nuevo == "n":
+                    break
+                elif agg_nuevo == "s":
+                    pass
+                else:
+                    print("Error, ingrese S para si o N para no.")
+ 
+        time.sleep(1)
 
-
-
+    elif opcion == 2: 
+        while True:
+            if len(tareas) == 0:
+                print("No hay tareas en tu lista.")
+                time.sleep(1)
+            else:
+                print("Lista de tareas")
+                for i, j in enumerate(tareas, start=1):
+                    print(f" {i}. {j}")
+                time.sleep(1)
+            menu = input("\n¿Desea volver al menú principal? S/N: ").lower()
+            if menu == "s":
+                break
+            elif menu == "n":
+                pass
+            else:
+                print("Error. Ingrese S para si o N para no.")
+    elif opcion == 3:
+        while True:
+            if len(tareas) == 0:
+                print("No hay tareas en tu lista.")
+                time.sleep(1)
+                break
+            else:
+                print("Lista de tareas")
+                for i, j in enumerate(tareas, start=1):
+                    print(f" {i}. {j}")
+                dele_tarea = int(input("Digite el numero de la tarea a eliminar: "))
+                for i in range(len(tareas)):
+                    if dele_tarea - 1 == i:
+                        tareas.remove(tareas[i])
+                        print(f"Tarea eliminada correctamente")
+                        time.sleep(1)
+                elim_tarea = input("Desea eliminar otra tarea? S/N: ").lower()
+                if elim_tarea == "s":
+                    pass
 
 
