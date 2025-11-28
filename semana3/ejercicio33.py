@@ -3,12 +3,14 @@ import os
 SEP = "-" * 30
 
 class Producto:
+    
     def __init__(self, nombre, precio, stock):
         self.nombre = nombre
         self.precio = precio
         self.stock = stock
     
     def aplicar_descuento(self, porcentaje):
+
         if porcentaje < 0 or porcentaje > 100:
             return False, 'Descuento inválido. Debe estar entre 0 y 100.'
         
@@ -23,7 +25,7 @@ class Producto:
             if cantidad > self.stock:
                 return False, f'No hay suficiente cantidad en stock. Stock actual: {self.stock}'
             
-            self.stock =- cantidad
+            self.stock -= cantidad
             
             return True, f'Venta registrada correctamente. Stock actual: {self.stock}'
         
@@ -33,89 +35,83 @@ class Producto:
         # Retorna string descriptivo del objeto
         return f"{self.nombre}: ${self.precio}"
 
-#-----------------
-# FUNCIONES DE UI
-#-----------------
 
-# MENÚS
-def menu_ver_productos(inventario):
+class Inventario:
+
+    def __init__(self):
+        self.productos = {}
     
-    print(SEP + " PRODUCTOS " + SEP + "\n")
+    def validar_existencia(self, nombre):
 
-
-# UTILES 
-def pedir_opcion(prompt):
-
-    while True:
-
-        opcion = input(prompt)
-
-        ok, data = validar_opcion(opcion, min_opcion=1, max_opcion=5)
-
-        if ok:
-            return data
+        productos = self.productos
         
-        else:
-            print(f"\n{data}\n")
+        if nombre in productos.keys():
+            return True
+        
+        return False
 
-#------------------
-# FUNCIONES ÚTILES
-#------------------
-
-def validar_opcion(opcion, min_opcion, max_opcion):
+    def obtener(self, nombre):
+        return self.productos.get(nombre, None)
     
-    """
-    Docstring for validar_opcion
+    def agregar(self, nombre, precio, stock):
+
+        existe = self.validar_existencia(nombre)
+
+        if existe:
+            return False, f"El producto '{nombre}' ya existe."
+
+        self.productos[nombre] = Producto(nombre, precio, stock)
+        return True, 'Producto agregado correctamente.'
     
-    :param opcion: Opción a validar
-    :param min_opcion: Opción minima del menú
-    :param max_opcion: Opción maxima del menú
+    def editar_nombre(self, nombre, nuevo_nombre):
 
-    """
-    try:
-        opcion = int(opcion)
+        existe = self.validar_existencia(nombre)
 
-        if min_opcion <= opcion <= max_opcion:
-            return True, opcion
+        if not existe:
+
+            return False, f'El producto {nombre} no existe.'
         
-        else:
-            return False, f'ERROR: Fuera del rango ({min_opcion} - {max_opcion}).'
+
+        if self.validar_existencia(nuevo_nombre):
+            return False, f"El nombre '{nuevo_nombre}' ya está en uso."
+            
+        product = self.productos.pop(nombre)
+        self.productos[nuevo_nombre] = product
+
+        return True, 'Nombre actualizado correctamente.'
     
-    except ValueError:
-        return False, 'ERROR: Ingrese un valor válido.'
+    def editar_precio(self, nombre, nuevo_precio):
 
-def ver_productos(inventario):
+        existe = self.validar_existencia(nombre)
 
-    if inventario:
-        
-        for llave, valor in inventario.items():
-            print(f" - {llave}: {valor}")
-        
-    else:
-        print("\n\t\t No hay productos registrados.\n")
-
-#------------------
-# FUNCIÓN PRINCIPAL
-#------------------
-
-def main():
-
-    SEP = "-" * 30
-    inventario = {}
-
-    print(SEP + " GESTIÓN DE INVENTARIO " + SEP + "\n")
-    print("\t\t1. Ver productos.", end=" ")
-    print("\t2. Agregar producto.")
-    print("\t\t3. Aplicar descuento.", end= " ")
-    print("\t4. Vender producto.")
-    print("\t\t5. Editar producto.", end=" ")
-    print("\t6. Salir.\n")
-
-    opcion = pedir_opcion("Seleccione una opción (1-6): ")
-
-    if opcion == 1:
-        menu_ver_productos(inventario)
+        if not existe:
+            return False, f'El producto {nombre} no existe.'
         
 
-if __name__ == '__main__':
-    main()
+        self.productos[nombre]
+    
+    def editar_stock(self, nombre, stock):
+
+        producto = self.productos[nombre] 
+        existe = self.validar_existencia(nombre)
+
+        if existe:
+
+            producto['stock'] = stock
+
+            return True, 'Stock actualizado correctamente.'
+        
+        return False, f"El producto '{nombre}' no existe"
+    
+    def eliminar(self, nombre):
+
+        producto = self.productos[nombre]
+        existe = self.validar_existencia(nombre)
+
+        if existe:
+
+            del producto
+
+            return True, f"El producto '{nombre}' ha sido eliminado correctamente."
+        
+        return False, f"El producto '{nombre}' no existe."
