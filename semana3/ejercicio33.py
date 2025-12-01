@@ -61,7 +61,7 @@ class Inventario:
             return False, f"El producto '{nombre}' ya existe."
         
         if precio < 0:
-            return 'El precio no puede ser negativo.'
+            return False, 'El precio no puede ser negativo.'
         
         if stock < 0:
             return False, 'El stock no puede ser negativo.'
@@ -310,7 +310,7 @@ def aplicar_descuento(inventario):
     
 def main():
     """Función principal del programa."""
-    
+
     inventario = Inventario()
 
     while True:
