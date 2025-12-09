@@ -27,7 +27,7 @@ class Libro:
         return self.prestado
     
     def __str__(self):
-        estado = '✅ Prestado' if self.prestado else '❌ Disponible'
+        estado = '❌ Prestado' if self.prestado else '✅ Disponible'
         return f"Titulo: {self.titulo}  -  Autor: {self.autor}  -  Estado: {estado}"
 
 class Biblioteca:
@@ -79,19 +79,24 @@ class Biblioteca:
 
         return f"Biblioteca: {self.total_libros} libros ({disponibles} disponibles. {prestados} prestados.)"
     
+def limpiar_terminal():
+    """Limpia la terminal según el sistema operativo."""
+    os.system("cls" if os.name == 'nt' else 'clear') 
 
 def mostrar_menu():
     print("\n" + SEP)
     print("SISTEMA DE GESTIÓN DE BIBLIOTECA".center(50))
     print(SEP)
-    print("1. Mostrar libros.")
+    print("\n1. Mostrar libros.")
     print("2. Agregar libro.")
     print("3. Buscar libro por titulo.")
-    print("0. Salir")
-    print(SEP + "\n")
+    print("4. Prestar libro.")
+    print("5. Devolver libro.")
+    print("0. Salir\n")
+    print(SEP)
 
 def menu_mostrar_libros(biblioteca):
-    print(" --- LIBROS --- \n")
+    print("\n --- LIBROS --- \n")
 
     if not biblioteca.libros:
         print("❌ Biblioteca vacía.")
@@ -101,11 +106,89 @@ def menu_mostrar_libros(biblioteca):
         print(f" {i}. {libro}.")
 
 def menu_agregar_libro(biblioteca):
-    print(" --- AGREGAR LIBRO --- \n")
-
+    print("\n --- AGREGAR LIBRO --- \n")
+    
     titulo = input("Titulo del libro: ").strip()
+    if not titulo:
+        print("❌ El titulo no puede estar vacío.")
+        return
+
     autor = input("Autor: ").strip()
+    if not autor:
+        print("❌ El autor no puede estar vacío.")
+        return
+    
     nuevo_libro = Libro(titulo, autor)
     exito, mensaje = biblioteca.agregar_libro(nuevo_libro)
     
     print("✅" if exito else "❌", mensaje)
+
+def menu_buscar_libro(biblioteca):
+    print("\n --- BUSCAR LIBRO --- \n")
+
+    titulo = input("Titulo del libro: ").strip()
+    libro = biblioteca.buscar_por_titulo(titulo)
+
+    if not libro:
+        print(f"❌ El libro '{titulo}' no existe.")
+        return
+    
+    print(f"✅ Libro encontrado: {libro}")
+
+def menu_prestar_libro(biblioteca):
+    print("\n --- PRESTAR LIBRO --- \n")
+
+    titulo = input("Titulo del libro: ").strip()
+    libro = biblioteca.buscar_por_titulo(titulo)
+    
+    if not libro:
+        print(f"❌ El libro '{titulo}' no existe.")
+        return
+    
+    exito = libro.prestar()
+    if exito:
+        print(f"✅ El libro '{titulo}' ha sido prestado correctamente.")
+    else:
+        print(f"❌ El libro '{titulo}' ya está prestado.")
+    
+def menu_devolver_libro(biblioteca):
+    print("\n --- DEVOLVER LIBRO --- \n")
+
+    titulo = input("Titulo del libro: ").strip()
+    libro = biblioteca.buscar_por_titulo(titulo)
+
+    if not libro:
+        print(f"❌ El libro '{titulo}' no existe.")
+        return
+    
+    exito, mensaje = libro.devolver()
+    print("✅" if exito else "❌", mensaje)
+
+def main():
+    biblioteca = Biblioteca()
+    
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ").strip()
+        
+        if opcion == '1':
+            menu_mostrar_libros(biblioteca)
+        elif opcion == '2':
+            menu_agregar_libro(biblioteca)
+        elif opcion == '3':
+            menu_buscar_libro(biblioteca)
+        elif opcion == '4':
+            menu_prestar_libro(biblioteca)
+        elif opcion == '5':
+            menu_devolver_libro(biblioteca)
+        elif opcion == '0':
+            print("Saliendo del sistema de gestión de biblioteca. ¡Hasta luego!")
+            break
+        else:
+            print("❌ Opción inválida. Por favor, intente de nuevo.")
+        
+        input("\nPresione Enter para continuar...")
+        limpiar_terminal()
+
+if __name__ == "__main__":
+    main()
