@@ -74,10 +74,10 @@ class Biblioteca:
         if not self.libros:
             return "Biblioteca vacía."
         
-        disponibles = len(self.libros_disponibles)
-        prestados = len(self.libros_prestados)
+        disponibles = len(self.libros_disponibles())
+        prestados = len(self.libros_prestados())
 
-        return f"Biblioteca: {self.total_libros} libros ({disponibles} disponibles. {prestados} prestados.)"
+        return f"Biblioteca: {self.total_libros()} libros ({disponibles} disponibles. {prestados} prestados.)"
     
 def limpiar_terminal():
     """Limpia la terminal según el sistema operativo."""
@@ -92,6 +92,9 @@ def mostrar_menu():
     print("3. Buscar libro por titulo.")
     print("4. Prestar libro.")
     print("5. Devolver libro.")
+    print("6. Ver estado de la biblioteca.")
+    print("7. Ver libros prestados.")
+    print("8. Ver libros disponibles.")
     print("0. Salir\n")
     print(SEP)
 
@@ -164,6 +167,32 @@ def menu_devolver_libro(biblioteca):
     exito, mensaje = libro.devolver()
     print("✅" if exito else "❌", mensaje)
 
+def menu_estado_biblioteca(biblioteca):
+    print("\n --- ESTADO DE LA BIBLIOTECA --- \n")
+    print(biblioteca)
+
+def menu_libros_prestados(biblioteca):
+    print("\n --- LIBROS PRESTADOS --- \n")
+
+    libros = biblioteca.libros_prestados()
+    if not libros:
+        print("❌ No hay libros prestados.")
+        return
+    
+    for i, libro in enumerate(libros, 1):
+        print(f"{i}. {libro}")
+
+def menu_libros_disponibles(biblioteca):
+    print("\n --- LIBROS DISPONIBLES --- \n")
+
+    libros = biblioteca.libros_disponibles()
+    if not libros:
+        print("❌ No hay libros disponibles.")
+        return
+    
+    for i, libro in enumerate(libros, 1):
+        print(f"{i}. {libro}")
+
 def main():
     biblioteca = Biblioteca()
     
@@ -181,11 +210,17 @@ def main():
             menu_prestar_libro(biblioteca)
         elif opcion == '5':
             menu_devolver_libro(biblioteca)
+        elif opcion == '6':
+            menu_estado_biblioteca(biblioteca)
+        elif opcion == '7':
+            menu_libros_prestados(biblioteca)
+        elif opcion == '8':
+            menu_libros_disponibles(biblioteca)
         elif opcion == '0':
-            print("Saliendo del sistema de gestión de biblioteca. ¡Hasta luego!")
+            print("¡Hasta luego!...")
             break
         else:
-            print("❌ Opción inválida. Por favor, intente de nuevo.")
+            print("\n❌ Opción inválida. Por favor, intente de nuevo.")
         
         input("\nPresione Enter para continuar...")
         limpiar_terminal()
