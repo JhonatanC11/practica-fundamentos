@@ -17,7 +17,7 @@ def guardar_contactos(contactos, archivo):
 
 def cargar_contactos(archivo):
     # Leer JSON y retornar diccionario
-    """Lee un archiovp JSON y retorna un diccionario"""
+    """Lee un archivo JSON y retorna un diccionario"""
     
     try:
         with open(archivo) as f:
