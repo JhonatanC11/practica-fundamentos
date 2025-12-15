@@ -13,7 +13,10 @@ class Tarea:
             "descripcion": self.descripcion,
             "completada": self.completada
         }
-
+    
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["descripcion"], data["completada"])
 class GestorTareas:
     def __init__(self):
         self.tareas = []
@@ -28,12 +31,8 @@ class GestorTareas:
         """
         Cambia el estado de una tarea a completada(true)
         """
-        if indice < 0:
-            return False, "El indice no puede ser negativo."
-
-        indice_limite = len(self.tareas)
-        if indice > indice_limite:
-            return False, f"Indice inválido. Límite: {indice_limite}"
+        if indice < 0 or indice >= len(self.tareas):
+            return False, "Indice inválido."
         
         tarea = self.tareas[indice]
         tarea.completada = True
@@ -47,10 +46,13 @@ class GestorTareas:
         try:
             with open(archivo, "w") as f:
                 json.dump([tarea.to_dict() for tarea in self.tareas], f, indent=4)
-                return True, "Las tareas han sido guardadas en JSON."
-
+                return True, "Las tareas han sido guardadas en formato JSON."
+        
+        except FileNotFoundError:
+            return False, "Archivo no encontrado"
+        
         except Exception as e:
-            print(f"Error creando el archivo: {e}")
+            return False, f"Error creando el archivo: {e}"
 
     def cargar_desde_json(self, archivo):
         """
@@ -59,26 +61,30 @@ class GestorTareas:
         """
 
         try:
+
             with open(archivo) as f:
                 lista = json.load(f)
                 
                 if not lista:
                     return False, "No hay tareas registradas"
                 
-                if not "descripcion" or not "completada" in lista:
-                    return False, "El archivo no cumple con el esquema necesario"
+                for tarea in lista:
+
+                    if "descripcion" not in tarea or "completada" not in tarea:
+                        return False, "El archivo no cumple con el esquema necesario"
                 
+                self.tareas = []
+
                 for data in lista:
-                    tarea = Tarea(data["descripcion"], data["completada"])
-                    self.tareas.append(tarea)
+                    self.tareas.append(Tarea.from_dict(data))
 
                 return True, "Tareas cargadas correctamente."
             
         except FileNotFoundError:
-            print("Archivo no encontrado")
+            return False, "Archivo no encontrado"
 
         except Exception as e:
-            print(f"Error durante la lectura: {e}")    
+            return False, f"Error durante la lectura: {e}"    
 
 #EJEMPLO DE USO:
 gestor = GestorTareas()
