@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+import unicodedata
 
 
 # ==================
@@ -13,12 +14,27 @@ class Libro:
         self.autor = autor
         self.disponible = True
 
+        # Versiones normalizadas (para busqueda)
+        self._titulo_norm = normalizar_texto(titulo)
+        self._autor_norm = normalizar_texto(autor)
+
+    def to_dict(self):
+        return {
+            "id_libro": self.id_libro,
+            "titulo": self.titulo,
+            "autor": self.autor,
+            "disponible": self.disponible,
+        }
+
 
 class Usuario:
 
     def __init__(self, id_usuario, nombre):
         self.id_usuario = id_usuario
         self.nombre = nombre
+
+    def to_dict(self):
+        return {"id_usuario": self.id_usuario, "nombre": self.nombre}
 
 
 class Prestamo:
@@ -81,8 +97,13 @@ class Bibiblioteca:
         return True, f"El usuario '{usuario.nombre}' se agregó correctamente."
 
     def prestar_libro(
-        self, id_usuario, id_libro, dias_prestamo, archivo="prestamos.json"
+        self,
+        id_usuario,
+        id_libro,
+        dias_prestamo,
     ):
+        # if dias_prestamo <= 0:
+        #   return False, "Los dias de prestamo deben ser mayor a 0."
 
         if not id_usuario in self.usuarios:
             return False, f"Usuario con ID: '{id_usuario}' no encontrado."
@@ -102,7 +123,11 @@ class Bibiblioteca:
         libro.disponible = False
         self.prestamos.append(nuevo_prestamo)
 
-        ok, mensaje = self.guardar_prestamos_json(archivo)
+        ok, mensaje = self.guardar_prestamos_json(archivo="prestamos.json")
+        if not ok:
+            return False, mensaje
+
+        ok, mensaje = self.guardar_libros_json(archivo="libros.json")
         if not ok:
             return False, mensaje
 
@@ -115,12 +140,17 @@ class Bibiblioteca:
         if not libro:
             return False, f"No se encontró un libro con este ID: '{id_libro}'"
 
-        for prestamo in self.prestamos:
-            if prestamo.id_libro == id_libro:
+        prestamo = None
+        for p in self.prestamos:
+            if p.id_libro == id_libro and not p.devuelto:
+                prestamo = p
                 break
 
         if not prestamo:
-            return False, f"No se encontró ningún prestamo del libro con ID: {id_libro}"
+            return (
+                False,
+                f"No se encontró ningún prestamo activo del libro con ID: {id_libro}",
+            )
 
         if prestamo.devuelto:
             return False, f"Error. El libro con ID: '{id_libro}' ya se había devuelto."
@@ -133,51 +163,127 @@ class Bibiblioteca:
 
         prestamo.devuelto = True
         libro.disponible = True
+
+        ok, mensaje = self.guardar_prestamos_json(archivo="prestamos.json")
+        if not ok:
+            return False, mensaje
+
+        ok, mensaje = self.guardar_libros_json(archivo="libros.json")
+        if not ok:
+            return False, mensaje
+
         return True, "Libro devuelto exitósamente."
 
     def calcular_multa(self, prestamo):
         return prestamo.calcular_dias_atraso() * self.multa_dias_atraso
 
-    def pagar_multa(self, prestamo, monto):
+    def pagar_multa(self, id_libro, monto):
 
-        if not prestamo in self.prestamos:
+        if monto <= 0:
+            return False, "El monto debe ser mayor a 0."
+
+        prestamo = None
+        for p in self.prestamos:
+            if p.id_libro == id_libro:
+                prestamo = p
+                break
+
+        if not prestamo:
             return False, "El prestamo no existe."
 
         if prestamo.devuelto:
             return False, "El prestamo no está activo."
+
+        if not prestamo.esta_atrasado():
+            return False, "El prestamo no está atrasado. No hay multa por pagar."
 
         multa = self.calcular_multa(prestamo)
 
         if not monto >= multa:
             return (
                 False,
-                f"El monto a pagar ({monto}) no cubre el total de la multa ({multa}).",
+                f"El monto a pagar (${monto}) no cubre el total de la multa (${multa}).",
             )
 
         prestamo.multa_pagada = True
+        ok, mensaje = self.guardar_prestamos_json(archivo="prestamos.json")
+        if not ok:
+            return False, mensaje
         return True, f"Multa pagada con éxito."
 
+    def buscar_libro_autor(self, autor):
+        autor_norm = normalizar_texto(autor)
+        return [libro for libro in self.libros.values() if libro._autor_norm == autor_norm]
+
+    def buscar_libro_titulo(self, titulo):
+        titulo_norm = normalizar_texto(titulo)
+        return [libro for libro in self.libros.values() if libro._titulo_norm == titulo_norm]
+
     def ver_prestamos_usuarios(self, id_usuario):
-        libros_prestados = [p.id_usuario == id_usuario for p in self.prestamos]
+        libros_prestados = [
+            p for p in self.prestamos if p.id_usuario == id_usuario and not p.devuelto
+        ]
         return len(libros_prestados)
 
     def guardar_prestamos_json(self, archivo):
 
         try:
-            with open(archivo, "w") as file:
+            with open(archivo, "w", encoding="utf-8") as file:
                 json.dump(
-                    [prestamo.to_dict() for prestamo in self.prestamos], file, indent=4
+                    [prestamo.to_dict() for prestamo in self.prestamos],
+                    file,
+                    indent=4,
+                    ensure_ascii=False,
                 )
                 return True, "Prestamos guardados correctamente en JSON."
 
         except Exception as e:
             return False, f"Error. Hubo un problema durante la escritura: {e}"
 
+    def guardar_libros_json(self, archivo):
+        libros_dict = {}
+
+        for libro_id, libro in self.libros.items():
+            libros_dict[libro_id] = libro.to_dict()
+
+        try:
+            with open(archivo, "w", encoding="utf-8") as file:
+                json.dump(libros_dict, file, indent=4, ensure_ascii=False)
+                return True, "Libros guardados correctamente en JSON."
+
+        except Exception as e:
+            return False, f"Error. Hubo un problema durante la escritura: {e}"
+
+    def guardar_usuarios_json(self, archivo):
+
+        usuarios_dict = {}
+
+        for usuario_id, usuario in self.usuarios.items():
+            usuarios_dict[usuario_id] = usuario.to_dict()
+
+        try:
+            with open(archivo, "w") as file:
+                json.dump(usuarios_dict, file, indent=4)
+                return True, "Libros guardados correctamente en JSON."
+
+        except Exception as e:
+            return False, f"Error. Hubo un problema durante la escritura: {e}"
+
+
+# =================
+# FUNCIONES UTILES
+# =================
+def normalizar_texto(texto):
+    texto = texto.lower().strip()
+    texto = unicodedata.normalize("NFD", texto)
+    texto = "".join(c for c in texto if unicodedata.category(c) != "Mn")
+    return texto
+
 
 biblioteca = Bibiblioteca()
 
 libro1 = Libro("L001", "El poder del ahora", "Jhonatan")
-libro2 = Libro("L002", "Cien años de soledad", "Garcia Marquez")
+libro2 = Libro("L002", "Cien años de soledad", "Jhonatan")
 libro3 = Libro("L003", "Deja de ser tú", "Joe Dispenza")
 libro4 = Libro("L004", "Meditaciones", "Marco Aurelio")
 
@@ -219,7 +325,7 @@ print(biblioteca.prestar_libro("U001", "L001", 15))
 
 print("\nPRESTAR +3 LIBROS: \n")
 print(biblioteca.prestar_libro("U001", "L002", 15))
-print(biblioteca.prestar_libro("U001", "L003", 15))
+print(biblioteca.prestar_libro("U001", "L003", -15))
 print("Libros prestados:", biblioteca.ver_prestamos_usuarios("U001"))
 print(biblioteca.prestar_libro("U001", "L004", 15))
 
@@ -228,3 +334,33 @@ print(biblioteca.prestar_libro("U001", "L006", 15))
 
 print("\nPRESTAR LIBRO A USUARIO QUE NO EXISTE: \n")
 print(biblioteca.prestar_libro("U006", "L001", 15))
+
+print("\nDEVOLVER LIBRO: ")
+print(biblioteca.devolver_libro("L001"))
+
+print("\nDEVOLVER LIBRO QUE NO EXISTE: ")
+print(biblioteca.devolver_libro("L007"))
+
+print("\nDEVOLVER LIBRO QUE NO ESTÁ PRESTADO: ")
+print(biblioteca.devolver_libro("L001"))
+
+print("\nDEVOLVER LIBRO CON ATRASO:")
+print(biblioteca.devolver_libro("L003"))
+
+print("\nPAGAR MULTA MONTO NEGATIVO:")
+print(biblioteca.pagar_multa("L003", -1500))
+
+print("\nPAGAR MULTA SIN PRESTAMO")
+print(biblioteca.pagar_multa("L004", 1500))
+
+print("\nPAGAR MULTA SIN MULTA:")
+print(biblioteca.pagar_multa("L002", 1500))
+
+print("\nPAGAR MULTA:")
+print(biblioteca.pagar_multa("L003", 1500))
+
+print("\nBUSCAR LIBRO POR AUTOR:")
+print(biblioteca.buscar_libro_autor("Jhonatan"))
+
+print("\nBUSCAR LIBRO POR TITULO: ")
+print(biblioteca.buscar_libro_titulo("El poder del ahora"))

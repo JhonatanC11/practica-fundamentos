@@ -1,0 +1,26 @@
+{
+    "L001": {
+        "id_libro": "L001",
+        "titulo": "El poder del ahora",
+        "autor": "Jhonatan",
+        "disponible": true
+    },
+    "L002": {
+        "id_libro": "L002",
+        "titulo": "Cien años de soledad",
+        "autor": "Jhonatan",
+        "disponible": false
+    },
+    "L003": {
+        "id_libro": "L003",
+        "titulo": "Deja de ser tú",
+        "autor": "Joe Dispenza",
+        "disponible": false
+    },
+    "L004": {
+        "id_libro": "L004",
+        "titulo": "Meditaciones",
+        "autor": "Marco Aurelio",
+        "disponible": true
+    }
+}
