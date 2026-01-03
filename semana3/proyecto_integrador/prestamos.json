@@ -2,24 +2,24 @@
     {
         "id_libro": "L001",
         "id_usuario": "U001",
-        "fecha_prestamo": "2025-12-31T09:58:24.836037",
-        "fecha_limite": "2026-01-15T09:58:24.836037",
+        "fecha_prestamo": "2026-01-02T20:32:30.771387",
+        "fecha_limite": "2026-01-17T20:32:30.771387",
         "devuelto": true,
         "multa_pagada": false
     },
     {
         "id_libro": "L002",
         "id_usuario": "U001",
-        "fecha_prestamo": "2025-12-31T09:58:24.837904",
-        "fecha_limite": "2026-01-15T09:58:24.837904",
+        "fecha_prestamo": "2026-01-02T20:32:30.787012",
+        "fecha_limite": "2026-01-17T20:32:30.787012",
         "devuelto": false,
         "multa_pagada": false
     },
     {
         "id_libro": "L003",
         "id_usuario": "U001",
-        "fecha_prestamo": "2025-12-31T09:58:24.839266",
-        "fecha_limite": "2025-12-16T09:58:24.839266",
+        "fecha_prestamo": "2026-01-02T20:32:30.787012",
+        "fecha_limite": "2025-12-18T20:32:30.787012",
         "devuelto": false,
         "multa_pagada": true
     }

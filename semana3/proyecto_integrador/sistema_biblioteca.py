@@ -116,7 +116,7 @@ class Bibiblioteca:
         if not libro.disponible:
             return False, f"El libro '{libro.titulo}' no está disponible."
 
-        if self.ver_prestamos_usuarios(id_usuario) >= 3:
+        if len(self.ver_prestamos_usuarios(id_usuario)) >= 3:
             return False, f"Error: El usuario ya alcanzó su límite de prestamos."
 
         nuevo_prestamo = Prestamo(id_libro, id_usuario, dias_prestamo)
@@ -213,17 +213,28 @@ class Bibiblioteca:
 
     def buscar_libro_autor(self, autor):
         autor_norm = normalizar_texto(autor)
-        return [libro for libro in self.libros.values() if libro._autor_norm == autor_norm]
+        return [
+            libro for libro in self.libros.values() if libro._autor_norm == autor_norm
+        ]
 
     def buscar_libro_titulo(self, titulo):
         titulo_norm = normalizar_texto(titulo)
-        return [libro for libro in self.libros.values() if libro._titulo_norm == titulo_norm]
-
-    def ver_prestamos_usuarios(self, id_usuario):
-        libros_prestados = [
-            p for p in self.prestamos if p.id_usuario == id_usuario and not p.devuelto
+        return [
+            libro for libro in self.libros.values() if libro._titulo_norm == titulo_norm
         ]
-        return len(libros_prestados)
+
+    def ver_prestamos_usuarios(self, id_usuario=None):
+
+        if id_usuario is None:
+            libros_prestados = [p for p in self.prestamos if not p.devuelto]
+
+        else:
+            libros_prestados = [
+                p
+                for p in self.prestamos
+                if p.id_usuario == id_usuario and not p.devuelto
+            ]
+        return libros_prestados
 
     def guardar_prestamos_json(self, archivo):
 
@@ -362,5 +373,26 @@ print(biblioteca.pagar_multa("L003", 1500))
 print("\nBUSCAR LIBRO POR AUTOR:")
 print(biblioteca.buscar_libro_autor("Jhonatan"))
 
+print("\nBUSCAR LIBRO POR AUTOR QUE NO EXISTE:")
+print(biblioteca.buscar_libro_autor("Messi"))
+
+print("\nBUSCAR LIBRO POR AUTOR PROBANDO EL NORMALIZE_TEXT")
+print(biblioteca.buscar_libro_autor(" mArcò AUrelìo "))
+
 print("\nBUSCAR LIBRO POR TITULO: ")
 print(biblioteca.buscar_libro_titulo("El poder del ahora"))
+
+print("\nBUSCAR LIBRO POR TITULO QUE NO EXISTE:")
+print(biblioteca.buscar_libro_autor("Cien años de soledad"))
+
+print("\nBUSCAR LIBRO POR TITULO PROBANDO EL NORMALIZE_TEXT")
+print(biblioteca.buscar_libro_titulo(" el POdèr déL aHOra "))
+
+print("\nVER LIBROS PRESTADOS POR USUARIO: ")
+
+prestamos = biblioteca.ver_prestamos_usuarios()
+print(biblioteca.ver_prestamos_usuarios())
+
+for prestamo in prestamos:
+    print(prestamo.to_dict())
+
