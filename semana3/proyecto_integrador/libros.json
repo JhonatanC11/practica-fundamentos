@@ -1,26 +1,50 @@
 {
-    "L001": {
-        "id_libro": "L001",
+    "L-1": {
+        "id_libro": "L-1",
         "titulo": "El poder del ahora",
-        "autor": "Jhonatan",
+        "autor": "Juan Gonzales",
         "disponible": true
     },
-    "L002": {
-        "id_libro": "L002",
-        "titulo": "Cien años de soledad",
-        "autor": "Jhonatan",
-        "disponible": false
-    },
-    "L003": {
-        "id_libro": "L003",
-        "titulo": "Deja de ser tú",
-        "autor": "Joe Dispenza",
-        "disponible": false
-    },
-    "L004": {
-        "id_libro": "L004",
+    "L-2": {
+        "id_libro": "L-2",
         "titulo": "Meditaciones",
         "autor": "Marco Aurelio",
+        "disponible": false
+    },
+    "L-3": {
+        "id_libro": "L-3",
+        "titulo": "Habitos atómicos",
+        "autor": "Juan Perez",
+        "disponible": false
+    },
+    "L-4": {
+        "id_libro": "L-4",
+        "titulo": "Memorias del subsuelo",
+        "autor": "Dostoyevski",
+        "disponible": false
+    },
+    "L-5": {
+        "id_libro": "L-5",
+        "titulo": "GordoFonki",
+        "autor": "Juan Pablo Caro",
+        "disponible": true
+    },
+    "L-6": {
+        "id_libro": "L-6",
+        "titulo": "El poder del ahora",
+        "autor": "Cristian",
+        "disponible": false
+    },
+    "L-7": {
+        "id_libro": "L-7",
+        "titulo": "El arte de la guerra",
+        "autor": "James Rodriguez",
+        "disponible": true
+    },
+    "L-8": {
+        "id_libro": "L-8",
+        "titulo": "Conversar",
+        "autor": "Liliana Marquez",
         "disponible": true
     }
 }

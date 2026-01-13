@@ -1,0 +1,30 @@
+{
+    "U-1": {
+        "id_usuario": "U-1",
+        "nombre": "Jhonatan Camacho"
+    },
+    "U-2": {
+        "id_usuario": "U-2",
+        "nombre": "Cristina Flores"
+    },
+    "U-3": {
+        "id_usuario": "U-3",
+        "nombre": "Alejandrina Lopez"
+    },
+    "U-4": {
+        "id_usuario": "U-4",
+        "nombre": "Juanita Barata"
+    },
+    "U-5": {
+        "id_usuario": "U-5",
+        "nombre": "Andres Paez"
+    },
+    "U-6": {
+        "id_usuario": "U-6",
+        "nombre": "Lionel Messi"
+    },
+    "U-7": {
+        "id_usuario": "U-7",
+        "nombre": "Camila Per\u00e9a"
+    }
+}

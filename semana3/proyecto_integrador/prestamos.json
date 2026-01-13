@@ -1,26 +1,42 @@
 [
     {
-        "id_libro": "L001",
-        "id_usuario": "U001",
-        "fecha_prestamo": "2026-01-02T20:32:30.771387",
-        "fecha_limite": "2026-01-17T20:32:30.771387",
+        "id_libro": "L-1",
+        "id_usuario": "U-1",
+        "fecha_prestamo": "2026-01-07T16:16:42.176035",
+        "fecha_limite": "2026-01-22T16:16:42.176035",
         "devuelto": true,
         "multa_pagada": false
     },
     {
-        "id_libro": "L002",
-        "id_usuario": "U001",
-        "fecha_prestamo": "2026-01-02T20:32:30.787012",
-        "fecha_limite": "2026-01-17T20:32:30.787012",
+        "id_libro": "L-2",
+        "id_usuario": "U-1",
+        "fecha_prestamo": "2026-01-07T16:26:08.177825",
+        "fecha_limite": "2026-01-22T16:26:08.177825",
         "devuelto": false,
         "multa_pagada": false
     },
     {
-        "id_libro": "L003",
-        "id_usuario": "U001",
-        "fecha_prestamo": "2026-01-02T20:32:30.787012",
-        "fecha_limite": "2025-12-18T20:32:30.787012",
+        "id_libro": "L-3",
+        "id_usuario": "U-1",
+        "fecha_prestamo": "2026-01-07T16:26:19.522955",
+        "fecha_limite": "2026-01-22T16:26:19.522955",
         "devuelto": false,
-        "multa_pagada": true
+        "multa_pagada": false
+    },
+    {
+        "id_libro": "L-6",
+        "id_usuario": "U-2",
+        "fecha_prestamo": "2026-01-08T11:22:52.121941",
+        "fecha_limite": "2026-01-23T11:22:52.121941",
+        "devuelto": false,
+        "multa_pagada": false
+    },
+    {
+        "id_libro": "L-4",
+        "id_usuario": "U-6",
+        "fecha_prestamo": "2026-01-08T14:21:06.955834",
+        "fecha_limite": "2026-01-23T14:21:06.955834",
+        "devuelto": false,
+        "multa_pagada": false
     }
 ]
