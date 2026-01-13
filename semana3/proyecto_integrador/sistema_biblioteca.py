@@ -202,11 +202,10 @@ class Bibiblioteca:
         if prestamo.devuelto:
             return False, f"Error. El libro con ID: '{id_libro}' ya se había devuelto."
 
-        if prestamo.esta_atrasado():
+        if prestamo.esta_atrasado() and not prestamo.multa_pagada:
 
-            if not prestamo.multa_pagada:
                 multa = self.calcular_multa(prestamo)
-                return False, f"Multa pendiente por pagar: ${multa}"
+                return False, f"No se puede devolver. Multa pendiente por pagar: ${multa}"
 
         prestamo.devuelto = True
         libro.disponible = True
